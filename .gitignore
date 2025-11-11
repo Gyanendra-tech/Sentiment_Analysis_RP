@@ -30,8 +30,8 @@ wheels/
 *.json
 *.tsv
 
-# Models
-models/*.pickle
+# Models - Allow pickle files for deployment
+# models/*.pickle
 
 # IDEs
 .vscode/
