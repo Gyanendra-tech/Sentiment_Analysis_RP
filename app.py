@@ -2,7 +2,6 @@
 from flask import Flask, render_template, request, jsonify
 import pickle
 import re
-from nltk.stem import WordNetLemmatizer
 import os
 
 app = Flask(__name__)
@@ -95,9 +94,14 @@ def predict_sentiment(text, model_name='lr'):
     # Get probability if available
     try:
         proba = model.predict_proba(vectorized)[0]
-        confidence = max(proba) * 100
+        confidence = float(max(proba) * 100)
     except:
-        confidence = None
+        # For models without predict_proba (like LinearSVC)
+        try:
+            decision = model.decision_function(vectorized)[0]
+            confidence = float(min(abs(decision) * 10, 100))
+        except:
+            confidence = 75.0  # Default confidence
     
     sentiment = "Positive" if prediction == 1 else "Negative"
     
@@ -198,4 +202,5 @@ if __name__ == '__main__':
         print("Please run 'python train_model.py' first")
     print("="*50 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)

@@ -124,9 +124,9 @@ def main():
     t = time.time()
     
     # For faster training, use a sample (remove this for full training)
-    print("   Note: Using 20% of data for faster training. Remove sampling for production.")
-    # Sample equally from both classes
-    sample_per_class = 160000  # 160k from each class = 320k total
+    print("   Note: Using smaller sample for deployment. Remove sampling for production.")
+    # Sample equally from both classes (reduced for deployment memory constraints)
+    sample_per_class = 80000  # 80k from each class = 160k total (optimized for Render free tier)
     df_negative = dataset[dataset['sentiment'] == 0].head(sample_per_class)
     df_positive = dataset[dataset['sentiment'] == 1].head(sample_per_class)
     dataset_sample = pd.concat([df_negative, df_positive]).sample(frac=1, random_state=42).reset_index(drop=True)
